@@ -7,11 +7,12 @@ interface Subscription {
   name: string;
   price: number;
   category: string;
-  billing_Date: string;
+  billing_date: string;
   cycle: number;
 }
 
 export default function SubscriptionPage() {
+
 
     const [mySubscriptions, setMySubscriptions] = useState<Subscription[]>([]);
     const [isMounted, setIsMounted] = useState(false);
@@ -21,38 +22,84 @@ export default function SubscriptionPage() {
     const [newCategory, setNewCategory] = useState('OTT');
     const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]); // 기본값 오늘
     const [selectedCycle, setSelectedCycle] = useState('30'); // 기본값 1개월(30일)
-    const [newBillingDate, setNewBillingDate] = useState(30);
     const isLoaded = useRef(false);
+    const [user, setUser] = useState<any>(null);
+    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     const getNextBillingDate = (startDateStr: string, cycleDays: number) => {
         const date = new Date(startDateStr);
         date.setDate(date.getDate() + cycleDays);
         return date.toISOString().split('T')[0];
     };
+    const getDaysUntil = (startDateStr: string, cycleDays: number) => {
+        const nextDate = new Date(startDateStr);
+        nextDate.setDate(nextDate.getDate() + cycleDays);
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        nextDate.setHours(0, 0, 0, 0);
+
+        const diffTime = nextDate.getTime() - today.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 *24));
+
+        return diffDays;
+    }
+
     useEffect(() => {
-        // 로직을 별도 함수로 분리합니다.
-        const loadData = () => {
-            const saved = localStorage.getItem('money-log-subs');
-            if (saved) {
-                setMySubscriptions(JSON.parse(saved));
-            }
+        const initAuth = async () => {
+            const {data: {session } } = await supabase.auth.getSession();
+            setUser(session?.user ?? null);
+
+            supabase.auth.onAuthStateChange((_event, session) => {
+                setUser(session?.user ?? null);
+                if (session?.user) setIsAuthModalOpen(false);
+            });
+        };
+        const loadData = async () => {
+            const {data, error} = await supabase
+                .from('subscriptions')
+                .select('*')
+                .order('id', { ascending: false});
+
+            if (error) console.error('데이터 로드 실패:', error.message);
+            else if (data) setMySubscriptions(data);
+
             setIsMounted(true);
             isLoaded.current = true;
         };
 
+        initAuth();
         loadData();
+
+
     }, []);
 
-    useEffect(() => {
-        if (isLoaded.current) {
-            localStorage.setItem('money-log-subs', JSON.stringify(mySubscriptions));
-        }
-    }, [mySubscriptions]);
+
+    const handleLogin = async () => {
+        const { error } = await supabase.auth.signInWithPassword({ email, password});
+        if (error) alert(error.message);
+    };
+
+    const handleSighUp = async () => {
+        const { error } = await supabase.auth.signUp({ email, password});
+        if(error) alert(error.message);
+        else alert('회원가입 성공! 이메일을 확인하거나 바로 로그인해보세요.');
+    };
+
+    const handleLogOut = async () => {
+        await supabase.auth.signOut();
+        setUser(null);
+    };
 
 
 
     const handleAdd = async (e: React.FormEvent) => {
         e.preventDefault();
+
+
+        const numbericPrice = Number(newPrice.replace(/[^0-9]/g, ''));
 
         if (!newName || !newPrice) {
             alert('이름과 가격을 모두 입력해주세요!');
@@ -65,7 +112,7 @@ export default function SubscriptionPage() {
             .insert([
                 {
                     name: newName,
-                    price: Number(newPrice),
+                    price: numbericPrice,
                     category: newCategory,
                     billing_date: startDate,
                     cycle: Number(selectedCycle),
@@ -81,13 +128,13 @@ export default function SubscriptionPage() {
             setMySubscriptions([...mySubscriptions, data[0]]);
             setNewName('');
             setNewPrice('');
-            setNewBillingDate(1);
+
         }
     };
 
     // 4. 구독 삭제 함수
     const handleDelete = async (id: number) => {
-        if(!comfirm('정말 삭제하시겠습니까 ?')) return;
+        if(!confirm('정말 삭제하시겠습니까 ?')) return;
 
         const {error} = await supabase
             .from('subscriptions')
@@ -106,7 +153,7 @@ export default function SubscriptionPage() {
     if (!isMounted) return null;
 
   return (
-      <div className="p-10 max-w-6xl mx-auto">
+      <div className="pt-24 pb-10 px-6 max-w-6xl mx-auto">
         <h1 className="text-2xl font-bold mb-6">나의 구독 관리</h1>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <div className="bg-white p-6 rounded-2xl shadow-sm border border-blue-100">
@@ -144,9 +191,12 @@ export default function SubscriptionPage() {
               <div className="w-32">
                   <label className="block text-sm font-medium text-gray-700 mb-1"> 가격(원)</label>
                   <input
-                      type="number"
+                      type="text"
                       value={newPrice}
-                      onChange={(e) => setNewPrice(e.target.value)}
+                      onChange={(e) => {
+                          const value = e.target.value.replace(/[^0-9]/g, '');
+                          setNewPrice(value)
+                      }}
                       placeholder="0"
                       className="w-full p-2 border rounded-md focus:ring-2  focus:ring-blue-500 outline-none text-sm"
                       />
@@ -202,6 +252,7 @@ export default function SubscriptionPage() {
                     <th className="p-4 font-semibold text-gray-600 text-sm">서비스 정보</th>
                     <th className="p-4 font-semibold text-gray-600 text-sm text-center">등록일</th>
                     <th className="p-4 font-semibold text-gray-600 text-sm text-center">정기 결제일</th>
+                    <th className="p-4 font-semibold text-gray-600 text-sm text-center">남은 기한</th>
                     <th className="p-4 font-semibold text-gray-600 text-sm text-center">금액</th>
                     <th className="p-4 font-semibold text-gray-600 text-sm text-center">관리</th>
                 </tr>
@@ -213,11 +264,11 @@ export default function SubscriptionPage() {
                             <div className="font-bold text-gray-800">{sub.name}</div>
                             <div className="text-xs text-gray-400">{sub.category}</div>
                         </td>
-                        {/* 1. 사용자가 직접 선택한 시작일 표시 */}
+
                         <td className="p-4 text-sm text-gray-500 text-center">
                             {sub.billing_date}
                         </td>
-                        {/* 2. 주기에 따른 뱃지 표시 (30 -> 1개월 등) */}
+
                         <td className="p-4 text-center">
                             <div className="text-sm font-bold text-blue-600">
                                 {getNextBillingDate(sub.billing_date, sub.cycle)}
@@ -227,8 +278,22 @@ export default function SubscriptionPage() {
                             </div>
 
                         </td>
+                        <td className="p-4 text-center">
+                            {(() => {
+                                const dDay = getDaysUntil(sub.billing_date, sub.cycle);
+                                if(dDay === 0) return <span className="text-red-600 font-bold animate-pluse"> 오늘 결제!</span>
+                                if(dDay < 0 ) return <span className="text-gray-400">만료일</span>;
+
+                                return(
+                                    <span className={`font-bold ${dDay <= 3 ? 'text-grange-500' : 'text-green-600'}`}>
+                                        D-{dDay}
+                                    </span>
+                                );
+                            })()}
+
+                        </td>
                         <td className="p-4 text-center font-semibold text-gray-700">
-                            {sub.price.toLocaleString()}원
+                            {Number(sub.price).toLocaleString()}원
                         </td>
                         <td className="p-4 text-center">
                             <button
