@@ -2,6 +2,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import {supabase} from "@/lib/supabase";
+import { User } from '@supabase/supabase-js';
 interface Subscription {
   id: number;
   name: string;
@@ -24,9 +25,7 @@ export default function SubscriptionPage() {
     const [selectedCycle, setSelectedCycle] = useState('30'); // 기본값 1개월(30일)
     const isLoaded = useRef(false);
     const [user, setUser] = useState<any>(null);
-    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+
 
     const getNextBillingDate = (startDateStr: string, cycleDays: number) => {
         const date = new Date(startDateStr);
@@ -54,7 +53,7 @@ export default function SubscriptionPage() {
 
             supabase.auth.onAuthStateChange((_event, session) => {
                 setUser(session?.user ?? null);
-                if (session?.user) setIsAuthModalOpen(false);
+
             });
         };
         const loadData = async () => {
@@ -77,16 +76,7 @@ export default function SubscriptionPage() {
     }, []);
 
 
-    const handleLogin = async () => {
-        const { error } = await supabase.auth.signInWithPassword({ email, password});
-        if (error) alert(error.message);
-    };
 
-    const handleSighUp = async () => {
-        const { error } = await supabase.auth.signUp({ email, password});
-        if(error) alert(error.message);
-        else alert('회원가입 성공! 이메일을 확인하거나 바로 로그인해보세요.');
-    };
 
     const handleLogOut = async () => {
         await supabase.auth.signOut();
@@ -282,7 +272,7 @@ export default function SubscriptionPage() {
                             {(() => {
                                 const dDay = getDaysUntil(sub.billing_date, sub.cycle);
                                 if(dDay === 0) return <span className="text-red-600 font-bold animate-pluse"> 오늘 결제!</span>
-                                if(dDay < 0 ) return <span className="text-gray-400">만료일</span>;
+                                if(dDay < 0 ) return <span className="text-gray-400">만료</span>;
 
                                 return(
                                     <span className={`font-bold ${dDay <= 3 ? 'text-grange-500' : 'text-green-600'}`}>
