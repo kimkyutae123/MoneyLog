@@ -152,7 +152,7 @@ export default function StatisticsPage() {
                     <h3 className="font-bold opacity-90 mb-4 text-sm"> 지출 예측 리포트</h3>
                     <p className="text-xs opacity-80 mb-1">다음 달 예상되는 고정 지출액</p>
                     <p className="text-2xl font-black">{nextMonthTotal.toLocaleString()}원</p>
-                    <div className="mt-4 p-2 bg-white/20 rounded-xl text-[11px">
+                    <div className="mt-4 p-2 bg-white/20 rounded-xl text-sm">
                         이번 달 보다 효율적인 소비를 위해 구독을 관리해 보세요!
                     </div>
                 </div>
