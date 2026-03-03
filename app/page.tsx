@@ -22,7 +22,7 @@ export default function HomePage() {
                         <Link href="/benefits" className="px-8 py-4 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 text-lg">
                             혜택 정보 보러가기
                         </Link>
-                        <Link href="/stats" className="px-8 py-4 bg-white text-gray-700 font-bold rounded-2xl border border-gray-200 hover:bg-gray-50 transition-all text-lg">
+                        <Link href="/statistics" className="px-8 py-4 bg-white text-gray-700 font-bold rounded-2xl border border-gray-200 hover:bg-gray-50 transition-all text-lg">
                             나의 지출 통계
                         </Link>
                     </div>
