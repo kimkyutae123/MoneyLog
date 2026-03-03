@@ -39,7 +39,7 @@ export default function Navbar() {
             <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
                 {/* 왼쪽: 로고 + 메뉴 리스트 */}
                 <div className="flex items-center space-x-8">
-                    <Link href="/public" className="text-xl font-bold text-blue-600 shrink-0">
+                    <Link href="/" className="text-xl font-bold text-blue-600 shrink-0">
                         MoneyLog 💰
                     </Link>
 
