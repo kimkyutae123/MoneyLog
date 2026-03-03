@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💰 MoneyLog (머니로그)
 
-## Getting Started
+> **"똑똑한 구독 생활의 시작, 당신의 숨은 혜택을 찾아드립니다."**
 
-First, run the development server:
+**MoneyLog**는 복잡한 통신사 결합 혜택과 구독 서비스를 한눈에 비교하고 관리하여 사용자의 고정 지출을 스마트하게 줄여주는 웹 서비스입니다.
+
+---
+
+## ✨ 핵심 기능 (Key Features)
+
+### 1. **통신 3사 구독 혜택 완전 정복**
+* **LG U+ 유독**: OTT 결합 및 생활 밀착형 구독 상품 **47종** 상세 정보 제공
+* **KT**: 디즈니+, 티빙 등 OTT와 커피 혜택이 결합된 실속형 상품 **36종** 정리
+* **SKT T우주**: 우주패스 기반의 다양한 선택형 구독 패키지 **24종** DB 구축
+
+### 2. **카테고리별 맞춤 탐색**
+* **OTT / 영상**: 넷플릭스, 유튜브 프리미엄, 티빙 등 인기 스트리밍 최저가 비교
+* **AI / 교육 / 자기계발**: 구글 AI, 캔바, 밀리의 서재 등 생산성 향상 도구 혜택
+* **도서 / 음악 / 라이프**: 쇼핑 포인트, 편의점 할인, 음악 스트리밍 등 일상 혜택
+
+### 3. **직관적인 UI/UX**
+* **반응형 디자인**: PC와 모바일 어디서든 편리하게 확인 가능한 카드 레이아웃
+* **실시간 필터링**: 내가 원하는 혜택만 빠르게 골라보는 탭 메뉴 시스템
+
+---
+
+## 🛠 Tech Stack
+
+* **Framework**: **Next.js (App Router)**
+* **Styling**: **Tailwind CSS**
+* **Language**: **TypeScript**
+* **Deployment**: **Vercel**
+
+---
+
+## 📅 프로젝트 히스토리 (History)
+
+* **2025.12 ~ 2026.01**: 서비스 기획 및 초기 UI 설계
+* **2026.01 ~ 2026.02**: 통신 3사(LG, KT, SKT) **107개** 혜택 데이터베이스 구축 및 상세 페이지 구현
+* **2026.03.03**: 메인 히어로 섹션 업데이트 및 **Vercel 배포** 준비 완료
+
+---
+
+## 🚀 시작하기 (How to Start)
 
 ```bash
+# 의존성 설치
+npm install
+
+# 개발 서버 실행
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# 배포용 빌드
+npm run build
